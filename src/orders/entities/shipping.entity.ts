@@ -1,7 +1,7 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { OrderEntity } from "./order.entity";
 
-@Entity({name:"shipping"})
+@Entity({name:"shippings"})
 export class ShippingEntity{
     @PrimaryGeneratedColumn()
     id:number;
@@ -19,7 +19,7 @@ export class ShippingEntity{
     city:string;
 
     @Column()
-    postode:string;
+    postCode:string;
 
     @Column()
     state:string;

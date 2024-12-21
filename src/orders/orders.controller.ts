@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Put } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthenticationGuard } from 'src/utility/common/guards/authentication.guard';
 import { CurrentUser } from 'src/utility/common/decorators/current-user.decorator';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { OrderEntity } from './entities/order.entity';
+import { AuthorizeGuard } from 'src/utility/common/guards/authorization.guard';
+import { Roles } from 'src/utility/common/user-roles.enum';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -12,24 +16,31 @@ export class OrdersController {
 
   @UseGuards(AuthenticationGuard)
   @Post('createOrder')
-  async create(@Body() createOrderDto: CreateOrderDto,@CurrentUser() currentUser:UserEntity) {
+  async create(@Body() createOrderDto: CreateOrderDto,@CurrentUser() currentUser:UserEntity):Promise<OrderEntity> {
     return await this.ordersService.create(createOrderDto,currentUser);
   }
 
-  @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  @Get('all')
+  async findAll():Promise<OrderEntity[]> {
+    return await this.ordersService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string):Promise<OrderEntity> {
     return await this.ordersService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+ // @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
+  @Put('updateOrder/:id')
+  async update(@Param('id') id: string, @Body() updateOrderStatusDto: UpdateOrderStatusDto, @CurrentUser() currentUser:UserEntity) {
+    return await this.ordersService.update(+id, updateOrderStatusDto, currentUser);
   }
+
+  @Put('cancelOrder/:id')
+ // @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
+ async cancelled(@Param('id') id:string,@CurrentUser() currentUser:UserEntity) {
+  return await this.ordersService.cancelled(+id,currentUser);
+ }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

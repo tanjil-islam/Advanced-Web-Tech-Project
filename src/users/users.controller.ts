@@ -38,8 +38,8 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
   
-  //@AuthorizeRoles(Roles.ADMIN)
- // @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
+  @AuthorizeRoles(Roles.ADMIN)
+  @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
   @Get('all')
   async findAll():Promise<UserEntity[]> {
     return await this.usersService.findAll();
@@ -60,7 +60,7 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
- // @UseGuards(AuthenticationGuard)
+  @UseGuards(AuthenticationGuard)
   @Get('me') 
   getProfile(@CurrentUser() currentUser:UserEntity) {
     return currentUser;

@@ -13,7 +13,7 @@ import { Roles } from 'src/utility/common/user-roles.enum';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  //@UseGuards(AuthenticationGuard)
+  @UseGuards(AuthenticationGuard)
   @Post('addReview')
   async create(@Body() createReviewDto: CreateReviewDto,@CurrentUser() currentUser:UserEntity):Promise<ReviewEntity> {
     return await this.reviewsService.create(createReviewDto,currentUser);
@@ -39,7 +39,7 @@ export class ReviewsController {
     return this.reviewsService.update(+id, updateReviewDto);
   }
 
-  //@UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
+  @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.reviewsService.remove(+id);

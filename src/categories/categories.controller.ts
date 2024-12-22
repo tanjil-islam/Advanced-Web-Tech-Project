@@ -13,7 +13,7 @@ import { CategoryEntity } from './entities/category.entity';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  //@UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
+  @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
   @Post('addcategory')
   async create(@Body() createCategoryDto: CreateCategoryDto,@CurrentUser() currentUser:UserEntity):Promise<CategoryEntity> {
     return await this.categoriesService.create(createCategoryDto,currentUser);
@@ -28,7 +28,7 @@ export class CategoriesController {
   async findOne(@Param('id') id: string) {
     return await this.categoriesService.findOne(+id);
   }
-  //@UseGuards(AuthenticationGuard, AuthorizeGuard([Roles.ADMIN]))
+  @UseGuards(AuthenticationGuard, AuthorizeGuard([Roles.ADMIN]))
   @Patch('update/:id')
   async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return await this.categoriesService.update(+id, updateCategoryDto);

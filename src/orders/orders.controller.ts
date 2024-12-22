@@ -30,14 +30,14 @@ export class OrdersController {
     return await this.ordersService.findOne(+id);
   }
 
- // @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
+  @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
   @Put('updateOrder/:id')
   async update(@Param('id') id: string, @Body() updateOrderStatusDto: UpdateOrderStatusDto, @CurrentUser() currentUser:UserEntity) {
     return await this.ordersService.update(+id, updateOrderStatusDto, currentUser);
   }
 
   @Put('cancelOrder/:id')
- // @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
+  @UseGuards(AuthenticationGuard,AuthorizeGuard([Roles.ADMIN]))
  async cancelled(@Param('id') id:string,@CurrentUser() currentUser:UserEntity) {
   return await this.ordersService.cancelled(+id,currentUser);
  }

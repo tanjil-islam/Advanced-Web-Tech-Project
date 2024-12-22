@@ -19,21 +19,28 @@ export class UsersService {
   ){}
 
   async signup(userSignUpDto:UserSignUpDto):Promise<UserEntity> {
-
-    const userExists=await this.findUserByEmail(userSignUpDto.email)
-    if(userExists) throw new BadRequestException('Email is not available.')
-
-      const user=this.usersRepository.create(userSignUpDto);
-      return await this.usersRepository.save(user);
+    const userExists = await this.findUserByEmail(userSignUpDto.email);
+    if (userExists) throw new BadRequestException('Email is not available.');
+    userSignUpDto.password = await hash(userSignUpDto.password, 10);
+    let user = this.usersRepository.create(userSignUpDto);
+    user = await this.usersRepository.save(user);
+    delete user.password;
+    return user;
     
   }
 
-  async signin(userSignInDto:UserSignInDto) {
-    const userExists=await this.usersRepository.createQueryBuilder('users').addSelect
-    ('users.password').where('users.email=:email',{email:userSignInDto.email}).getOne();
-    if(!userExists) throw new BadRequestException('Bad Credential');
-    const matchPassword=await compare(userSignInDto.password,userExists.password);
-    if(!matchPassword) throw new BadRequestException('Bad Credential.');
+  async signin(userSignInDto:UserSignInDto):Promise<UserEntity> {
+    const userExists = await this.usersRepository
+      .createQueryBuilder('users')
+      .addSelect('users.password')
+      .where('users.email=:email', { email: userSignInDto.email })
+      .getOne();
+    if (!userExists) throw new BadRequestException('Bad creadentials.');
+    const matchPassword = await compare(
+      userSignInDto.password,
+      userExists.password,
+    );
+    if (!matchPassword) throw new BadRequestException('Bad creadentials.');
     delete userExists.password;
     return userExists;
   }

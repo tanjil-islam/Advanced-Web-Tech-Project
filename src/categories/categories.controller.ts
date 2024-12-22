@@ -28,7 +28,7 @@ export class CategoriesController {
   async findOne(@Param('id') id: string) {
     return await this.categoriesService.findOne(+id);
   }
-
+  //@UseGuards(AuthenticationGuard, AuthorizeGuard([Roles.ADMIN]))
   @Patch('update/:id')
   async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return await this.categoriesService.update(+id, updateCategoryDto);
